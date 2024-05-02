@@ -36,7 +36,6 @@ warn_return_any = true
 check_untyped_defs = true
 plugins = ['pydantic.mypy']
 ignore_missing_imports = true
-plugins = ["mypy_django_plugin.main"]
 
 
 [tool.pytest.ini_options]

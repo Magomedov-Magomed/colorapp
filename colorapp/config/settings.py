@@ -1,10 +1,14 @@
 from datetime import timedelta
 from pathlib import Path
 
+import dj_database_url
+
+from config.utils import get_env_param_bool, get_env_param_str
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = "django-insecure-x%&f)uh1^+b=n(zl$ds^nfxi-b3*6-vhna#^bd0mol=960ru0$"
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY = get_env_param_str("SECRET_KEY")
+DEBUG = get_env_param_bool("DEBUG", True)
+ALLOWED_HOSTS = ['*']
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -19,6 +23,8 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
+    'drf_spectacular_sidecar',
+    "whitenoise.runserver_nostatic",
 ]
 
 LOCAL_APPS = [
@@ -36,6 +42,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "urls"
@@ -58,12 +65,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+DEFAULT_DATABASE_URL = get_env_param_str("DATABASE_URL", default="sqlite:///db.sqlite3")
+DATABASES = {"default": dj_database_url.parse(DEFAULT_DATABASE_URL)}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -90,6 +93,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "static"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "users.User"
@@ -111,30 +120,11 @@ SPECTACULAR_SETTINGS = {
         "filter": True,  # включить поиск по тегам
     },
     "COMPONENT_SPLIT_REQUEST": True,
+    'SWAGGER_UI_DIST': 'SIDECAR',
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
 }
 
-
-# LOGGING = {
-#     'version': 1,
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'filters': ['require_debug_true'],
-#             'class': 'logging.StreamHandler',
-#         }
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#             'handlers': ['console'],
-#         }
-#     }
-# }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=6),

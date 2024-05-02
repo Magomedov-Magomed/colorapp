@@ -10,7 +10,6 @@ from users.services import UserService
 
 from api.serializers import (
     ColorSerializer,
-    ColorSerializerCreate,
     PaletteSerializer,
     UserReadSerializer,
     UserRegistrationSerializer,
@@ -47,11 +46,12 @@ class ColorViewSet(
     def get_queryset(self):
         return self.color_service.get_base_collors_qs()
 
+    @extend_schema(tags=['Colors'])
     def create(self, request, *args, **kwargs):
-        serializer = ColorSerializerCreate(data=request.data)
+        serializer = ColorSerializer(data=request.data)
         if serializer.is_valid():
             color = self.color_service.create_color(serializer.data)
-            serializer = ColorSerializerCreate(color)
+            serializer = ColorSerializer(color)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 

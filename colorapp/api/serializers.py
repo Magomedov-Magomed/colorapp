@@ -26,7 +26,3 @@ class ColorSerializer(serializers.ModelSerializer):
         model = Color
         fields = ('id', 'palette_id', 'name', 'hex')
         read_only_fields = ('name', 'id')
-
-
-class ColorSerializerCreate(ColorSerializer):
-    palette_id = serializers.IntegerField()
