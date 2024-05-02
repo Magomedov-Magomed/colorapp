@@ -32,8 +32,8 @@ services:
   color-migrate:
     build: .
     command: python manage.py migrate --noinput
+    depends_on:
+      - db
     env_file:
       - local.env
-
-
 
