@@ -45,4 +45,4 @@ def test_palette_crud(client: Client, auth_token):
 
 @pytest.mark.django_db
 def test_collors_crud(client: Client, auth_token):
-    pass  # TODO написать по аналогии
+    pass
